@@ -24,7 +24,7 @@ sample_data = pd.DataFrame({
 
 # Load the data
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv(uploaded_file, encoding_errors='replace')
 else:
     st.sidebar.info("Using sample data — upload a CSV to replace it.")
     df = sample_data
