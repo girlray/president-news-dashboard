@@ -17,7 +17,7 @@ uploaded_file = st.sidebar.file_uploader("Upload a CSV with Institution, Title, 
 
 # === LOAD DATA ===
 if uploaded_file:
-    df = pd.read_csv(uploaded_file, encoding='utf-8', errors='replace')
+    df = pd.read_csv(uploaded_file, encoding='utf-8', encoding_errors='replace')
 else:
     st.sidebar.warning("Please upload a CSV to display results.")
     st.stop()
