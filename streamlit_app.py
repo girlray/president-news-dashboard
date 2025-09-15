@@ -9,7 +9,7 @@ GNEWS_API_URL = "https://gnews.io/api/v4/search"
 
 # === PAGE SETUP ===
 st.set_page_config(page_title="President News Dashboard", layout="wide")
-st.title("📰 Coalition President News Dashboard")
+st.title("📰 President News Dashboard")
 
 # === FILE UPLOAD ===
 st.sidebar.header("Upload President List")
