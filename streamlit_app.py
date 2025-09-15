@@ -23,7 +23,7 @@ sample_data = pd.DataFrame({
 })
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file, encoding='utf-8', errors='replace')
+    df = pd.read_csv(uploaded_file, encoding='utf-8', encoding_errors='replace')
 else:
     st.sidebar.info("Using sample data — upload a CSV to replace it.")
     df = sample_data
