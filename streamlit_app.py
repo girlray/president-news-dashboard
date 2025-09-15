@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
 import requests
-import urllib.parse
 
 # === CONFIG ===
-NEWS_API_KEY = "pub_662681d987f848a68a7b199b5f9609b3"  # Sign up at https://newsdata.io/
-NEWS_API_URL = "https://newsdata.io/api/1/news"
+GNEWS_API_KEY = "
+5a057fbc085dd87985b068336a96375e"  # Replace with your actual key from https://gnews.io/
+GNEWS_API_URL = "https://gnews.io/api/v4/search"
 
 # === PAGE SETUP ===
 st.set_page_config(page_title="President News Dashboard", layout="wide")
@@ -32,39 +32,23 @@ else:
 
 # === SEARCH FUNCTION ===
 def fetch_news(first, last, institution):
-    query = f'"{first} {last}" "{institution}"'
+    query = f'"{institution}" AND president AND ("{first} {last}" OR "{last}")'
     params = {
-        "apikey": NEWS_API_KEY,
         "q": query,
-        "language": "en",
+        "token": GNEWS_API_KEY,
+        "lang": "en",
         "country": "us",
-        "category": "education",
-        "page": 1
+        "max": 5
     }
     try:
-        response = requests.get(NEWS_API_URL, params=params)
+        response = requests.get(GNEWS_API_URL, params=params)
         response.raise_for_status()
         data = response.json()
-        return data.get("results", [])
+        return data.get("articles", [])
     except Exception as e:
         return []
 
-# === DISPLAY RESULTS ===
-for index, row in df.iterrows():
-    first = row["First"]
-    last = row["Last"]
-    institution = row["Institution"]
-    full_name = f"{first} {last}"
-
-    with st.expander(f"🔎 {full_name} – {institution}"):
-        articles = fetch_news(first, last, institution)
-
-        if not articles:
-            st.write("No recent news found.")
-        else:
-            for article in articles:
-                st.markdown(f"### [{article['title']}]({article['link']})")
-                st.markdown(f"*{article.get('pubDate', 'No date')} — {article.get('source_id', 'Unknown Source')}*")
+# === DISPL
                 st.write(article.get("description", "No description available."))
                 st.markdown("---")
 
