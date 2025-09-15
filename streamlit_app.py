@@ -47,9 +47,23 @@ def fetch_news(first, last, institution):
     except Exception as e:
         return []
 
-# === DISPL
-st.write(article.get("description", "No description available."))
-st.markdown("---")
+# === DISPLAY RESULTS ===
+for index, row in df.iterrows():
+    first = row["First"]
+    last = row["Last"]
+    institution = row["Institution"]
+    full_name = f"{first} {last}"
 
+    with st.expander(f"🔎 {full_name} – {institution}"):
+        articles = fetch_news(first, last, institution)
+
+        if not articles:
+            st.write("No recent news found.")
+        else:
+            for article in articles:
+                st.markdown(f"### [{article['title']}]({article['url']})")
+                st.markdown(f"*{article.get('publishedAt', 'No date')} — {article.get('source', {}).get('name', 'Unknown Source')}*")
+                st.write(article.get("description", "No description available."))
+                st.markdown("---")
 st.sidebar.markdown("---")
 st.sidebar.caption("Created with ❤️ using Streamlit + NewsData.io")
