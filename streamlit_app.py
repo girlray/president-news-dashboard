@@ -1,33 +1,26 @@
 import streamlit as st
 import pandas as pd
 import requests
+import urllib.parse
 
 # === CONFIG ===
-GNEWS_API_KEY = "5a057fbc085dd87985b068336a96375e"  # Replace with your actual key from https://gnews.io/
+GNEWS_API_KEY = "5a057fbc085dd87985b068336a96375e"  # Replace with your actual key from https://gnews.io/ 
 GNEWS_API_URL = "https://gnews.io/api/v4/search"
 
 # === PAGE SETUP ===
-st.set_page_config(page_title="President News Dashboard", layout="wide")
-st.title("📰 Coalition President News Dashboard")
+st.set_page_config(page_title="Coalition President News Dashboard", layout="wide")
+st.title("🗞️ President News Dashboard")
 
 # === INPUT SECTION ===
 st.sidebar.header("Upload President List")
 uploaded_file = st.sidebar.file_uploader("Upload a CSV with Institution, Title, First, Last", type=["csv"])
 
-# Sample fallback data
-sample_data = pd.DataFrame({
-    "Institution": ["American University", "Amherst College", "Augsburg University"],
-    "Title": ["President", "President", "President"],
-    "First": ["Jon", "Michael", "Paul"],
-    "Last": ["Alger", "Elliott", "Pribbenow"]
-})
-
-# Load the data
+# === LOAD DATA ===
 if uploaded_file:
-    df = pd.read_csv(uploaded_file, encoding_errors='replace')
+    df = pd.read_csv(uploaded_file, encoding='utf-8', errors='replace')
 else:
-    st.sidebar.info("Using sample data — upload a CSV to replace it.")
-    df = sample_data
+    st.sidebar.warning("Please upload a CSV to display results.")
+    st.stop()
 
 # === SEARCH FUNCTION ===
 def fetch_news(first, last, institution):
@@ -54,16 +47,18 @@ for index, row in df.iterrows():
     institution = row["Institution"]
     full_name = f"{first} {last}"
 
-    with st.expander(f"🔎 {full_name} – {institution}"):
-        articles = fetch_news(first, last, institution)
+    articles = fetch_news(first, last, institution)
 
-        if not articles:
+    if not articles:
+        with st.expander(f"{full_name} – {institution}"):
             st.write("No recent news found.")
-        else:
-            for article in articles:
-                st.markdown(f"### [{article['title']}]({article['url']})")
-                st.markdown(f"*{article.get('publishedAt', 'No date')} — {article.get('source', {}).get('name', 'Unknown Source')}*")
-                st.write(article.get("description", "No description available."))
-                st.markdown("---")
+    else:
+        st.markdown(f"## 🟢 {full_name} – {institution}")
+        for article in articles:
+            st.markdown(f"### [{article['title']}]({article['url']})")
+            st.markdown(f"*{article.get('publishedAt', 'No date')}* — {article.get('source', {}).get('name', 'Unknown Source')}")
+            st.write(article.get("description", "No description available."))
+            st.markdown("---")
+
 st.sidebar.markdown("---")
-st.sidebar.caption("Created with ❤️ using Streamlit + NewsData.io")
+st.sidebar.caption("Created with ❤️ using Streamlit + GNews API")
