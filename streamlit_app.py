@@ -3,8 +3,7 @@ import pandas as pd
 import requests
 
 # === CONFIG ===
-GNEWS_API_KEY = "
-5a057fbc085dd87985b068336a96375e"  # Replace with your actual key from https://gnews.io/
+GNEWS_API_KEY = "5a057fbc085dd87985b068336a96375e"  # Replace with your actual key from https://gnews.io/
 GNEWS_API_URL = "https://gnews.io/api/v4/search"
 
 # === PAGE SETUP ===
