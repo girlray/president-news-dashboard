@@ -46,46 +46,44 @@ def fetch_news(first, last, institution):
     except Exception as e:
         return []
 
-# === LAYOUT FUNCTION ===
-def display_president_card(president, news_items):
-    first = president["First"]
-    last = president["Last"]
-    institution = president["Institution"]
-
-    if news_items:
-        st.markdown(f"#### 🟢 {first} {last}")
-        st.markdown(f"**{institution}**")
-        for article in news_items:
-            title = article.get("title", "Untitled")
-            link = article.get("url", "")
-            source = article.get("source", {}).get("name", "Unknown Source")
-            date_str = article.get("publishedAt", "")
-            try:
-                date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-                date_str = date_obj.strftime("%b %d, %Y")
-            except:
-                pass
-            st.markdown(f"- [{title}]({link})  ")
-            st.markdown(f"🗞 {source} | 📅 {date_str}")
-    else:
-        st.markdown(f"#### ⚪ {first} {last}")
-        st.markdown(f"**{institution}**")
-        st.markdown(f"<span style='color:gray;'>(No recent news found)</span>", unsafe_allow_html=True)
-
 # === DISPLAY PRESIDENTS ===
-with_news = []
-without_news = []
+st.subheader("Presidents with Recent News")
+has_news = []
+no_news = []
 
 for _, row in df.iterrows():
-    news = fetch_news(row["First"], row["Last"], row["Institution"])
+    first = row["First"]
+    last = row["Last"]
+    institution = row["Institution"]
+    news = fetch_news(first, last, institution)
     if news:
-        with_news.append((row, news))
+        has_news.append((row, news))
     else:
-        without_news.append((row, []))
+        no_news.append((row, []))
 
-st.markdown("### 🟢 Presidents with News")
-for i in range(0, len(with_news), 3):
+# Show presidents with news — 3 per row
+for i in range(0, len(has_news), 3):
     cols = st.columns(3)
     for j in range(3):
-        if i + j < len(with_news):
-            with
+        if i + j < len(has_news):
+            row, articles = has_news[i + j]
+            with cols[j]:
+                st.markdown(f"### 🟢 {row['First']} {row['Last']}<br><small>{row['Institution']}</small>", unsafe_allow_html=True)
+                for article in articles:
+                    st.markdown(f"**[{article['title']}]({article['url']})**")
+                    st.markdown(f"<small>📅 {article['publishedAt'][:10]} &nbsp;&nbsp; 🗞 {article['source']['name']}</small>", unsafe_allow_html=True)
+                    st.markdown("---")
+
+# Show presidents with NO news — grayed out
+if no_news:
+    st.subheader("Presidents with No Recent News")
+    for i in range(0, len(no_news), 3):
+        cols = st.columns(3)
+        for j in range(3):
+            if i + j < len(no_news):
+                row, _ = no_news[i + j]
+                with cols[j]:
+                    st.markdown(f"<div style='color: gray;'>⚪ {row['First']} {row['Last']}<br><small>{row['Institution']}</small><br><em>No recent news found</em></div>", unsafe_allow_html=True)
+
+st.sidebar.markdown("---")
+st.sidebar.caption("Created with ❤️ using Streamlit + GNews.io")
