@@ -48,8 +48,8 @@ def fetch_news(first, last, institution):
         return []
 
 # === DISPL
-                st.write(article.get("description", "No description available."))
-                st.markdown("---")
+st.write(article.get("description", "No description available."))
+st.markdown("---")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Created with ❤️ using Streamlit + NewsData.io")
